@@ -3,6 +3,7 @@ services:
     name: pricegent-api
     runtime: python
     rootDir: backend
+    plan: free
     buildCommand: pip install .
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
@@ -12,8 +13,6 @@ services:
       - key: PRICEGENT_LLM_MODEL
         sync: false
       - key: PRICEGENT_LLM_BASE_URL
-        sync: false
-      - key: PRICEGENT_IMAGE_API_KEY
         sync: false
       - key: FIREBASE_SERVICE_ACCOUNT_JSON
         sync: false

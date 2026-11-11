@@ -16,9 +16,11 @@ stays true and where the imagined model stops matching reality.
 
 ## Deploy the API
 
-The repository includes a Render Blueprint in [render.yaml](render.yaml). Create
-a Render service from this repository using that Blueprint, then configure the
-model provider environment variables in the Render dashboard:
+The repository includes a Render Blueprint in [render.yaml](render.yaml). It
+uses Render's free instance plan, which can sleep after inactivity and cold-start
+on the next request. Create a Render service from this repository using that
+Blueprint, then configure the model provider environment variables in the
+Render dashboard:
 
 - `PRICEGENT_LLM_API_KEY`
 - `PRICEGENT_LLM_MODEL`
