@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: pricegent-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install .
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PRICEGENT_LLM_API_KEY
+        sync: false
+      - key: PRICEGENT_LLM_MODEL
+        sync: false
+      - key: PRICEGENT_LLM_BASE_URL
+        sync: false
+      - key: PRICEGENT_IMAGE_API_KEY
+        sync: false

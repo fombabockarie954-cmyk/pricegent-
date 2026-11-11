@@ -1,0 +1,162 @@
+{
+  "title": "Choose Pricegent's first visual direction",
+  "question": "The Android-first study app will turn supplied material into explanations and connected knowledge. Choose the visual system for its first working slice.",
+  "options": [
+    {
+      "id": "assigned",
+      "kind": "assigned",
+      "label": "The Study Folio",
+      "lineage": "Annotated textbooks, study guides, and handwritten margin notes",
+      "thesis": "A familiar study desk turns supplied material into a guided, revisit-able learning path.",
+      "palette": ["#F7F1E5", "#24364B", "#486E83", "#D7A94A", "#A44C3E"],
+      "materials": ["warm paper", "pencil rules", "blue ink", "saffron index tabs"],
+      "viewport": "An Android study home puts the next learning action first, then a recent project and saved studies.",
+      "risk": "Paper cues can feel nostalgic unless the app's digital actions stay crisp and accessible.",
+      "raised": [
+        {
+          "from": "operate-b-exposure-record-zone-sheets",
+          "raise": "Keep source disagreements and uncertainty visibly distinct instead of flattening them into one answer."
+        },
+        {
+          "from": "editorial-sequence-montage-botanical-folio-season",
+          "raise": "Make prerequisites and learning progression legible before advanced concepts."
+        },
+        {
+          "from": "digital-design-canon-dark-first-developer-console",
+          "raise": "Keep destructive edits isolated from routine study actions."
+        },
+        {
+          "from": "pop-culture-shelf-streaming-title-card-wall",
+          "raise": "Make saved topics easy to scan, with clear status and a useful next action."
+        }
+      ],
+      "html": ".impeccable\\mocks\\decision\\assigned.html",
+      "htmlFrame": "390x844"
+    },
+    {
+      "id": "pick",
+      "kind": "pick",
+      "kicker": "IMPECCABLE’S PICK",
+      "label": "The Concept Atlas",
+      "lineage": "Printed atlases and route maps",
+      "thesis": "Turn a topic into a map of ideas, with prerequisites and relationships shown as navigable routes.",
+      "palette": ["#173B50", "#2B817B", "#F2E8D4", "#D8A446", "#C86150"],
+      "materials": ["inked contour lines", "map-paper ground", "route markers"],
+      "viewport": "A learner's home leads from a new study action into a highlighted topic map, where each relationship is a legible route.",
+      "risk": "Map language can imply certainty unless evidence and uncertainty remain explicit.",
+      "html": ".impeccable\\mocks\\decision\\pick.html",
+      "htmlFrame": "390x844"
+    },
+    {
+      "id": "challenger-crouwel",
+      "kind": "challenger",
+      "catalogId": "crouwel-grid-specimen",
+      "label": "The Grid Specimen",
+      "lineage": "Wim Crouwel's gridded type specimens",
+      "thesis": "A visible grid makes concepts and their hierarchy feel exact and easy to compare.",
+      "palette": ["#F5F7F8", "#172E4A", "#3575A5", "#D6E3EC"],
+      "materials": ["graph-paper hairlines", "geometric type", "one vivid accent plane"],
+      "viewport": "A study dashboard uses a quiet construction grid to separate the new-material action, concept hierarchy, and recent work.",
+      "risk": "The grid can become a rigid aesthetic rather than a helpful learning structure.",
+      "verdict": "competitive",
+      "case": "Its discipline improves hierarchy and comparison, though the atlas connects concepts more naturally.",
+      "html": ".impeccable\\mocks\\decision\\challenger-crouwel.html",
+      "htmlFrame": "390x844"
+    },
+    {
+      "id": "challenger-gate-board",
+      "kind": "challenger",
+      "catalogId": "vernacular-ephemera-boarding-pass-and-gate-board",
+      "label": "The Learning Route Board",
+      "lineage": "Boarding passes and live departure boards",
+      "thesis": "A learning route makes the next concept and a changed understanding easy to spot.",
+      "palette": ["#F3F0E7", "#1D3445", "#416F69", "#D89C35", "#B94C3B"],
+      "materials": ["segmented paper", "tabular figures", "persistent change markers"],
+      "viewport": "The home screen pairs a clear next-step route with a live-looking list of saved study projects and their progress states.",
+      "risk": "Travel-board language can make learning feel like a queue instead of an exploration.",
+      "verdict": "competitive",
+      "case": "Its persistent state changes clarify learning progress, but the atlas better expresses conceptual relationships.",
+      "html": ".impeccable\\mocks\\decision\\challenger-gate-board.html",
+      "htmlFrame": "390x844"
+    },
+    {
+      "id": "challenger-exposure",
+      "kind": "challenger",
+      "catalogId": "operate-b-exposure-record-zone-sheets",
+      "label": "The Evidence Overlay",
+      "lineage": "Darkroom exposure records and translucent print sheets",
+      "thesis": "Separate evidence layers keep conflicting claims visible instead of blending them together.",
+      "palette": ["#18232B", "#E6E0D3", "#9E4A8B", "#B5C4C8"],
+      "materials": ["translucent sheets", "eleven-step tonal ramp", "cross-hatched conflict marks"],
+      "viewport": "A study report layers source claims and marks an unresolved conflict without hiding the explanation.",
+      "risk": "Darkroom notation is too specialized to orient a broad learning audience.",
+      "verdict": "declined",
+      "kept": "Keep uncertainty and source conflicts distinct and traceable.",
+      "htmlFrame": "390x844"
+    },
+    {
+      "id": "challenger-botanical",
+      "kind": "challenger",
+      "catalogId": "editorial-sequence-montage-botanical-folio-season",
+      "label": "The Growing Field Guide",
+      "lineage": "Botanical field guides and seasonal plates",
+      "thesis": "Concepts unfold from foundations toward advanced understanding in visible stages.",
+      "palette": ["#F5F0E5", "#485F42", "#A44337", "#282C29"],
+      "materials": ["registered folio plates", "graphite captions", "seasonal color"],
+      "viewport": "A study project shows prerequisite concepts before advanced ideas and marks what the learner has explored.",
+      "risk": "Botanical imagery can narrow an app meant for every subject.",
+      "verdict": "declined",
+      "kept": "Show prerequisite and advanced concepts as a real learning progression.",
+      "htmlFrame": "390x844"
+    },
+    {
+      "id": "challenger-console",
+      "kind": "challenger",
+      "catalogId": "digital-design-canon-dark-first-developer-console",
+      "label": "The Dark Knowledge Console",
+      "lineage": "Dark-first developer workspaces",
+      "thesis": "Persistent panels keep study material, extracted concepts, and actions in view together.",
+      "palette": ["#151A20", "#E5E9ED", "#73A6D0", "#78A58B"],
+      "materials": ["graphite surfaces", "hairline seams", "tabular figures"],
+      "viewport": "A compact analysis workspace places supplied notes beside extracted definitions and concept links.",
+      "risk": "Developer-console conventions do not fit the broader learning audience.",
+      "verdict": "declined",
+      "kept": "Separate consequential edits from routine actions with clear spacing and confirmation.",
+      "htmlFrame": "390x844"
+    },
+    {
+      "id": "challenger-shelf",
+      "kind": "challenger",
+      "catalogId": "pop-culture-shelf-streaming-title-card-wall",
+      "label": "The Study Shelf",
+      "lineage": "Streaming catalog shelves and title cards",
+      "thesis": "A scannable shelf makes it quick to resume a saved topic or start another.",
+      "palette": ["#20252A", "#F1EEE8", "#BFC9D1", "#D89C35"],
+      "materials": ["deep neutral ground", "topic covers", "focused shelf rows"],
+      "viewport": "The home screen groups saved studies by recent activity and exposes a clear resume action.",
+      "risk": "A media catalog can make knowledge feel like content to browse rather than ideas to understand.",
+      "verdict": "declined",
+      "kept": "Make saved studies scannable and easy to resume.",
+      "htmlFrame": "390x844"
+    }
+  ],
+  "reroll": {
+    "registers": ["safer", "bolder"]
+  },
+  "buildPath": {
+    "value": "code"
+  },
+  "canon": true,
+  "canonCard": {
+    "kind": "canon",
+    "label": "The category standard",
+    "thesis": "Use a familiar, well-executed study dashboard with no distinct visual-world commitment.",
+    "palette": ["#FFFFFF", "#1F2937", "#2563EB"],
+    "materials": ["clean grid", "neutral surfaces", "standard Material 3 components"],
+    "viewport": "A conventional dashboard gives the new-study action, recent projects, and saved library clear priority.",
+    "risk": "It will be easy to use but harder to recognize and remember.",
+    "html": ".impeccable\\mocks\\decision\\canon.html",
+    "htmlFrame": "390x844"
+  },
+  "steer": true
+}
