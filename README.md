@@ -37,28 +37,21 @@ signed in with Google. The health check is intentionally public.
 
 ## Configure Firebase sign-in
 
-Create a Firebase project, add an Android app with package name
-`com.pricegent.pricegent_mobile`, and enable Google under Authentication
-sign-in providers. Add the Android SHA fingerprints from `.\gradlew
-signingReport` (run from `android`) to the Firebase app. Get the Firebase API
-key, Android app ID, project ID, messaging sender ID, and the project's Web
-OAuth client ID. These client identifiers are not secrets; the backend service
-account private key is.
+The Firebase Android app and Google sign-in provider must be configured for
+package name `com.pricegent.pricegent_mobile`. Add the Android SHA fingerprints
+from `.\gradlew signingReport` (run from `android`) to the Firebase app. Firebase
+client identifiers are set in [firebase_config.dart](lib/firebase_config.dart);
+they are public app configuration, not secrets. The backend service-account
+private key is secret.
 
 Create a Firebase service-account key in Firebase project settings and add its
 full JSON contents to Render as `FIREBASE_SERVICE_ACCOUNT_JSON`. Never commit
 that JSON or share it in chat.
 
-Build the Android app with the deployed API URL and Firebase client settings:
+Build the Android app with the deployed API URL:
 
 ```powershell
-flutter run `
-  --dart-define=PRICEGENT_API_BASE_URL=https://your-service.onrender.com `
-  --dart-define=FIREBASE_API_KEY=your-firebase-api-key `
-  --dart-define=FIREBASE_APP_ID=your-android-app-id `
-  --dart-define=FIREBASE_PROJECT_ID=your-firebase-project-id `
-  --dart-define=FIREBASE_MESSAGING_SENDER_ID=your-sender-id `
-  --dart-define=GOOGLE_SERVER_CLIENT_ID=your-web-oauth-client-id
+flutter run --dart-define=PRICEGENT_API_BASE_URL=https://your-service.onrender.com
 ```
 
 ## Run the mobile app
@@ -73,7 +66,7 @@ flutter run --dart-define=PRICEGENT_API_BASE_URL=https://your-service.onrender.c
 Replace the example URL with your Render service URL (no trailing slash).
 Android emulators and physical phones use the same hosted URL. The app has no
 laptop-hosted default; if the URL is omitted, study generation reports a
-configuration error. Firebase settings are required to sign in and use the
+configuration error. Firebase app settings are required to sign in and use the
 study endpoints.
 
 ## Run the API

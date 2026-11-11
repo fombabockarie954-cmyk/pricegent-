@@ -35,11 +35,11 @@ model spend.
 
 In Firebase, register an Android app using package name
 `com.pricegent.pricegent_mobile`, enable Google as an Authentication provider,
-and add the app's Android signing SHA fingerprints. The mobile app uses the
-Firebase API key, app ID, project ID, messaging sender ID, and Web OAuth client
-ID as build-time client configuration. The backend verifies ID tokens using
-the Firebase Admin SDK and `FIREBASE_SERVICE_ACCOUNT_JSON`; the private service
-account key must remain only in Render's secret settings.
+and add the app's Android signing SHA fingerprints. The public Firebase API
+key, app ID, project ID, messaging sender ID, and Web OAuth client ID are set
+in `lib/firebase_config.dart`. The backend verifies ID tokens using the Firebase
+Admin SDK and `FIREBASE_SERVICE_ACCOUNT_JSON`; the private service-account key
+must remain only in Render's secret settings.
 
 ## Run locally for development
 
