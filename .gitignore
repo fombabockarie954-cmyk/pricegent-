@@ -30,7 +30,7 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-/build/
+**/build/
 /coverage/
 /.venv/
 **/.venv/
@@ -38,6 +38,8 @@ migrate_working_dir/
 **/*.egg-info/
 .env
 .env.*
+**/*firebase-adminsdk*.json
+**/service-account*.json
 
 # Symbolication related
 app.*.symbols

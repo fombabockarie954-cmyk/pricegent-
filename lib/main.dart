@@ -1,9 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 
+import 'auth_gate.dart';
+import 'auth_service.dart';
+import 'firebase_config.dart';
 import 'study_result_page.dart';
 
-void main() {
-  runApp(const PricegentApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (!PricegentFirebaseConfig.isConfigured) {
+    runApp(const PricegentApp());
+    return;
+  }
+  try {
+    await Firebase.initializeApp(options: PricegentFirebaseConfig.options);
+  } on FirebaseException catch (error) {
+    runApp(
+      PricegentApp(
+        setupMessage:
+            'Firebase initialization failed: ${error.message ?? error.code}',
+      ),
+    );
+    return;
+  }
+  runApp(PricegentApp(authService: FirebaseUserAuthService()));
 }
 
 const _ink = Color(0xFF24364B);
@@ -13,7 +33,10 @@ const _saffron = Color(0xFFD7A94A);
 const _red = Color(0xFFA44C3E);
 
 class PricegentApp extends StatelessWidget {
-  const PricegentApp({super.key});
+  const PricegentApp({this.authService, this.setupMessage, super.key});
+
+  final UserAuthService? authService;
+  final String? setupMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +77,14 @@ class PricegentApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const StudyHomePage(),
+      home: authService == null
+          ? FirebaseSetupPage(message: setupMessage)
+          : AuthGate(
+              authService: authService!,
+              authenticatedBuilder: (context) => StudyHomePage(
+                onSignOut: () => authService!.signOut(),
+              ),
+            ),
     );
   }
 }
@@ -68,7 +98,9 @@ class Study {
 }
 
 class StudyHomePage extends StatefulWidget {
-  const StudyHomePage({super.key});
+  const StudyHomePage({this.onSignOut, super.key});
+
+  final VoidCallback? onSignOut;
 
   @override
   State<StudyHomePage> createState() => _StudyHomePageState();
@@ -104,6 +136,7 @@ class _StudyHomePageState extends State<StudyHomePage> {
             _HomeTab(
               studies: _studies,
               onAddStudy: _addStudy,
+              onSignOut: widget.onSignOut,
               onSeeAll: () => setState(() => _tabIndex = 1),
             ),
             _StudiesTab(studies: _studies, onAddStudy: _addStudy),
@@ -140,11 +173,13 @@ class _HomeTab extends StatelessWidget {
   const _HomeTab({
     required this.studies,
     required this.onAddStudy,
+    required this.onSignOut,
     required this.onSeeAll,
   });
 
   final List<Study> studies;
   final VoidCallback onAddStudy;
+  final VoidCallback? onSignOut;
   final VoidCallback onSeeAll;
 
   @override
@@ -157,7 +192,7 @@ class _HomeTab extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(22, 12, 22, 24),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              const _TopBar(),
+              _TopBar(onSignOut: onSignOut),
               const SizedBox(height: 27),
               Text(
                 _todayLabel(),
@@ -215,7 +250,9 @@ class _HomeTab extends StatelessWidget {
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar();
+  const _TopBar({this.onSignOut});
+
+  final VoidCallback? onSignOut;
 
   @override
   Widget build(BuildContext context) {
@@ -229,12 +266,19 @@ class _TopBar extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        const CircleAvatar(
-          radius: 19,
-          backgroundColor: _saffron,
-          foregroundColor: _ink,
-          child: Text('PG', style: TextStyle(fontSize: 12)),
-        ),
+        if (onSignOut != null)
+          IconButton(
+            onPressed: onSignOut,
+            tooltip: 'Sign out',
+            icon: const Icon(Icons.logout),
+          )
+        else
+          const CircleAvatar(
+            radius: 19,
+            backgroundColor: _saffron,
+            foregroundColor: _ink,
+            child: Text('PG', style: TextStyle(fontSize: 12)),
+          ),
       ],
     );
   }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:pricegent_mobile/auth_service.dart';
 import 'package:pricegent_mobile/learning_service.dart';
 import 'package:pricegent_mobile/main.dart';
 import 'package:pricegent_mobile/study_report.dart';
@@ -15,11 +16,19 @@ void main() {
     TestWidgetsFlutterBinding.ensureInitialized();
   });
 
+  testWidgets('requires Firebase configuration before app use', (tester) async {
+    await tester.pumpWidget(const PricegentApp());
+    expect(find.textContaining('Firebase is not configured.'), findsOneWidget);
+  });
+
   testWidgets('home opens add-material flow and validates empty input', (
     tester,
   ) async {
     _setPhoneSize(tester);
-    await tester.pumpWidget(const PricegentApp());
+    await tester.pumpWidget(
+      PricegentApp(authService: _FakeAuthService()),
+    );
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Add material'));
     await tester.pumpAndSettle();
 
@@ -36,7 +45,10 @@ void main() {
     tester,
   ) async {
     _setPhoneSize(tester);
-    await tester.pumpWidget(const PricegentApp());
+    await tester.pumpWidget(
+      PricegentApp(authService: _FakeAuthService()),
+    );
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Add material'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField).first, 'Photosynthesis');
@@ -194,6 +206,7 @@ void main() {
     final service = ApiLearningService(
       client: client,
       baseUrl: 'http://example.test',
+      tokenProvider: () async => 'test-id-token',
     );
 
     final image = await service.generateCrossSectionImage(
@@ -210,12 +223,15 @@ void main() {
       jsonDecode(client.body!)['title'],
       'Photosynthesis',
     );
+    expect(client.authorization, 'Bearer test-id-token');
     service.close();
   });
 
   test('network errors recommend checking the hosted API URL', () async {
     final service = ApiLearningService(
       client: _FailingHttpClient(http.ClientException('network failure')),
+      baseUrl: 'https://api.example.test',
+      tokenProvider: () async => 'test-id-token',
     );
 
     await expectLater(
@@ -234,6 +250,21 @@ void main() {
 
     service.close();
   });
+}
+
+class _FakeAuthService implements UserAuthService {
+  @override
+  Stream<AuthUser?> get authStateChanges =>
+      Stream.value(const AuthUser(id: 'test-user'));
+
+  @override
+  Future<String?> getIdToken() async => 'test-id-token';
+
+  @override
+  Future<void> signInWithGoogle() async {}
+
+  @override
+  Future<void> signOut() async {}
 }
 
 void _setPhoneSize(WidgetTester tester) {
@@ -295,10 +326,12 @@ class _RecordingHttpClient extends http.BaseClient {
 class _ImageResponseClient extends http.BaseClient {
   Uri? uri;
   String? body;
+  String? authorization;
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     uri = request.url;
+    authorization = request.headers['authorization'];
     body = utf8.decode(await request.finalize().toBytes());
     return http.StreamedResponse(
       Stream.value([1, 2, 3]),

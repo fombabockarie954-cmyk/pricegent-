@@ -19,15 +19,27 @@ service:
 - `PRICEGENT_LLM_BASE_URL` (optional; defaults to `https://api.openai.com/v1`)
 - `PRICEGENT_IMAGE_API_KEY` (optional; needed for Gemini image generation
   unless `PRICEGENT_LLM_API_KEY` is a Gemini key)
+- `FIREBASE_SERVICE_ACCOUNT_JSON` (required; Firebase Admin service-account JSON)
 
-Use Render's secret environment-variable settings for keys. Once deployed,
-verify `https://<service-name>.onrender.com/health` returns
+Use Render's secret environment-variable settings for keys and the Firebase
+service-account JSON. Never commit or share the service-account JSON. Once
+deployed, verify `https://<service-name>.onrender.com/health` returns
 `{"status":"ok"}` and configure the app with that HTTPS base URL.
 
-**Do not deploy with model credentials until authentication and rate limiting
-have been added.** The current study endpoints are public and could be abused
-to consume model credits. The health endpoint is only a health check, not an
-access control mechanism.
+Study and illustration requests require a valid Firebase ID token. The public
+health endpoint does not expose study functionality. Add quotas or rate limits
+before scaling the service or allowing broad public use to further constrain
+model spend.
+
+## Configure Firebase authentication
+
+In Firebase, register an Android app using package name
+`com.pricegent.pricegent_mobile`, enable Google as an Authentication provider,
+and add the app's Android signing SHA fingerprints. The mobile app uses the
+Firebase API key, app ID, project ID, messaging sender ID, and Web OAuth client
+ID as build-time client configuration. The backend verifies ID tokens using
+the Firebase Admin SDK and `FIREBASE_SERVICE_ACCOUNT_JSON`; the private service
+account key must remain only in Render's secret settings.
 
 ## Run locally for development
 
@@ -75,8 +87,9 @@ The study guide remains available if image generation is not configured. The
 learner can request an illustration separately from the study result screen.
 
 For local development only, run Flutter from the project root in a second
-PowerShell terminal. Use `10.0.2.2` for an Android emulator or use `adb
-reverse` and `127.0.0.1` for a USB-connected Android phone:
+PowerShell terminal. Along with the Firebase build options documented in the
+root README, use `10.0.2.2` for an Android emulator or `adb reverse` and
+`127.0.0.1` for a USB-connected Android phone:
 
 ```powershell
 cd .. # Move from backend/ to the Flutter project root (pricegent_mobile/)
@@ -87,8 +100,8 @@ For USB, run `adb reverse tcp:8000 tcp:8000` and pass
 `--dart-define=PRICEGENT_API_BASE_URL=http://127.0.0.1:8000`. Neither local URL
 is used as an app default.
 
-If model settings are missing, the endpoint returns HTTP 503 with an actionable
-configuration message; it does not return a fake success-shaped report.
+If Firebase credentials or model settings are missing, the API reports an
+explicit configuration error; it does not return a fake success-shaped report.
 ## Test
 
 ```powershell

@@ -25,15 +25,41 @@ model provider environment variables in the Render dashboard:
 - `PRICEGENT_LLM_BASE_URL` (optional; defaults to OpenAI's API URL)
 - `PRICEGENT_IMAGE_API_KEY` (optional; needed for image generation unless the
   model API key is also a Gemini key)
+- `FIREBASE_SERVICE_ACCOUNT_JSON` (required; Firebase Admin service-account JSON)
 
-Keep all provider keys in Render's environment settings; never put them in the
-Flutter app or commit them. After deployment, check the service's `/health`
-endpoint and copy its HTTPS service URL.
+Keep all provider keys and the Firebase service-account JSON in Render's
+environment settings; never put them in the Flutter app, paste them into chat,
+or commit them. After deployment, check the service's `/health` endpoint and
+copy its HTTPS service URL.
 
-**Before deploying a public service with model credentials, add authentication
-and rate limiting.** The current API has neither, so anyone who discovers its
-URL could use your configured model account and incur charges. The health check
-does not protect the study endpoints.
+The study and illustration endpoints require a Firebase ID token from a user
+signed in with Google. The health check is intentionally public.
+
+## Configure Firebase sign-in
+
+Create a Firebase project, add an Android app with package name
+`com.pricegent.pricegent_mobile`, and enable Google under Authentication
+sign-in providers. Add the Android SHA fingerprints from `.\gradlew
+signingReport` (run from `android`) to the Firebase app. Get the Firebase API
+key, Android app ID, project ID, messaging sender ID, and the project's Web
+OAuth client ID. These client identifiers are not secrets; the backend service
+account private key is.
+
+Create a Firebase service-account key in Firebase project settings and add its
+full JSON contents to Render as `FIREBASE_SERVICE_ACCOUNT_JSON`. Never commit
+that JSON or share it in chat.
+
+Build the Android app with the deployed API URL and Firebase client settings:
+
+```powershell
+flutter run `
+  --dart-define=PRICEGENT_API_BASE_URL=https://your-service.onrender.com `
+  --dart-define=FIREBASE_API_KEY=your-firebase-api-key `
+  --dart-define=FIREBASE_APP_ID=your-android-app-id `
+  --dart-define=FIREBASE_PROJECT_ID=your-firebase-project-id `
+  --dart-define=FIREBASE_MESSAGING_SENDER_ID=your-sender-id `
+  --dart-define=GOOGLE_SERVER_CLIENT_ID=your-web-oauth-client-id
+```
 
 ## Run the mobile app
 
@@ -47,7 +73,8 @@ flutter run --dart-define=PRICEGENT_API_BASE_URL=https://your-service.onrender.c
 Replace the example URL with your Render service URL (no trailing slash).
 Android emulators and physical phones use the same hosted URL. The app has no
 laptop-hosted default; if the URL is omitted, study generation reports a
-configuration error.
+configuration error. Firebase settings are required to sign in and use the
+study endpoints.
 
 ## Run the API
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -29,22 +30,51 @@ class LearningServiceException implements Exception {
   String toString() => message;
 }
 
+typedef IdTokenProvider = Future<String?> Function();
+
 class ApiLearningService implements LearningService {
-  ApiLearningService({http.Client? client, String? baseUrl})
-      : _client = client ?? http.Client(),
+  ApiLearningService({
+    http.Client? client,
+    String? baseUrl,
+    IdTokenProvider? tokenProvider,
+  })  : _client = client ?? http.Client(),
         _ownsClient = client == null,
-        _baseUrl = baseUrl ?? _defaultApiBaseUrl;
+        _baseUrl = baseUrl ?? _defaultApiBaseUrl,
+        _tokenProvider = tokenProvider ?? _firebaseIdToken;
 
   final http.Client _client;
   final bool _ownsClient;
   final String _baseUrl;
+  final IdTokenProvider _tokenProvider;
 
   static const _configuredApiBaseUrl = String.fromEnvironment(
     'PRICEGENT_API_BASE_URL',
   );
-  static const _defaultApiBaseUrl = _configuredApiBaseUrl != ''
-      ? _configuredApiBaseUrl
-      : '';
+  static const _defaultApiBaseUrl =
+      _configuredApiBaseUrl != '' ? _configuredApiBaseUrl : '';
+
+  static Future<String?> _firebaseIdToken() async =>
+      FirebaseAuth.instance.currentUser?.getIdToken();
+
+  Future<Map<String, String>> _authorizedHeaders() async {
+    final String? idToken;
+    try {
+      idToken = await _tokenProvider();
+    } on FirebaseAuthException {
+      throw const LearningServiceException(
+        'Your sign-in session expired. Sign in again and retry.',
+      );
+    }
+    if (idToken == null || idToken.isEmpty) {
+      throw const LearningServiceException(
+        'Sign in with Google before using the learning service.',
+      );
+    }
+    return {
+      'content-type': 'application/json',
+      'authorization': 'Bearer $idToken',
+    };
+  }
 
   @override
   void close() {
@@ -72,7 +102,7 @@ class ApiLearningService implements LearningService {
       final response = await _client
           .post(
             endpoint,
-            headers: const {'content-type': 'application/json'},
+            headers: await _authorizedHeaders(),
             body: jsonEncode({'title': title, 'source': source}),
           )
           .timeout(const Duration(seconds: 65));
@@ -132,7 +162,7 @@ class ApiLearningService implements LearningService {
       final response = await _client
           .post(
             endpoint,
-            headers: const {'content-type': 'application/json'},
+            headers: await _authorizedHeaders(),
             body: jsonEncode({'title': title, 'source': source}),
           )
           .timeout(const Duration(seconds: 125));

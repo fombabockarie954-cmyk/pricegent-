@@ -9,6 +9,7 @@ description = "Structured study-guide API for Pricegent."
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115,<1",
+    "firebase-admin>=6.5,<8",
     "httpx>=0.27,<1",
     "pydantic>=2.9,<3",
     "uvicorn[standard]>=0.30,<1",

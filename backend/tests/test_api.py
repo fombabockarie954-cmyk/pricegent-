@@ -10,6 +10,15 @@ def anyio_backend() -> str:
     return "asyncio"
 
 
+@pytest.fixture(autouse=True)
+def mock_firebase_auth(monkeypatch) -> None:
+    monkeypatch.setattr(
+        main,
+        "verify_firebase_id_token",
+        lambda token: {"uid": "test-user"},
+    )
+
+
 def _sample_report() -> StudyReport:
     return StudyReport.model_validate(
         {
@@ -99,6 +108,7 @@ async def test_process_returns_complete_study_report(monkeypatch) -> None:
     ) as client:
         response = await client.post(
             "/v1/studies/process",
+            headers={"Authorization": "Bearer test-token"},
             json={
                 "title": "Photosynthesis",
                 "source": (
@@ -132,6 +142,7 @@ async def test_illustrate_returns_generated_image_bytes(monkeypatch) -> None:
     ) as client:
         response = await client.post(
             "/v1/studies/illustrate",
+            headers={"Authorization": "Bearer test-token"},
             json={
                 "title": "Photosynthesis",
                 "source": (
@@ -154,6 +165,7 @@ async def test_process_rejects_source_that_is_too_short() -> None:
     ) as client:
         response = await client.post(
             "/v1/studies/process",
+            headers={"Authorization": "Bearer test-token"},
             json={"title": "Short", "source": "Too short"},
         )
 
@@ -170,6 +182,7 @@ async def test_process_reports_missing_model_configuration(monkeypatch) -> None:
     ) as client:
         response = await client.post(
             "/v1/studies/process",
+            headers={"Authorization": "Bearer test-token"},
             json={
                 "title": "Photosynthesis",
                 "source": (
@@ -181,3 +194,43 @@ async def test_process_reports_missing_model_configuration(monkeypatch) -> None:
 
     assert response.status_code == 503
     assert "PRICEGENT_LLM_API_KEY" in response.json()["detail"]
+
+
+@pytest.mark.anyio
+async def test_study_endpoints_require_a_bearer_token() -> None:
+    async with AsyncClient(
+        transport=ASGITransport(app=main.app),
+        base_url="http://test",
+    ) as client:
+        response = await client.post(
+            "/v1/studies/process",
+            json={
+                "title": "Photosynthesis",
+                "source": "Plants absorb light energy and store it as glucose.",
+            },
+        )
+
+    assert response.status_code == 401
+    assert response.headers["www-authenticate"] == "Bearer"
+
+
+@pytest.mark.anyio
+async def test_study_endpoint_rejects_an_invalid_firebase_token(monkeypatch) -> None:
+    def reject_token(token: str) -> dict[str, str]:
+        raise main.InvalidFirebaseTokenError
+
+    monkeypatch.setattr(main, "verify_firebase_id_token", reject_token)
+    async with AsyncClient(
+        transport=ASGITransport(app=main.app),
+        base_url="http://test",
+    ) as client:
+        response = await client.post(
+            "/v1/studies/process",
+            headers={"Authorization": "Bearer invalid-token"},
+            json={
+                "title": "Photosynthesis",
+                "source": "Plants absorb light energy and store it as glucose.",
+            },
+        )
+
+    assert response.status_code == 401
