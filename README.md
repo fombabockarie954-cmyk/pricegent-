@@ -1,6 +1,7 @@
 # Pricegent
 
-Pricegent is an Android-first learning app built with Flutter/Dart and a
+Pricegent is an interactive AI learning app that helps learners practice the
+S.E.E. principle. It is built with Flutter/Dart and a
 separate Python/FastAPI service. The API is designed to run as a hosted service,
 so study generation does not depend on a developer's laptop being online. Its
 first study flow accepts pasted material and turns it into:
